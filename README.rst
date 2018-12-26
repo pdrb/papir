@@ -11,12 +11,11 @@ headers.
 
 Basic http authentication is supported.
 
-Simple example:
-
-::
+Simple example::
 
     $ papir httpbin.org/get
-    .. image:: https://raw.githubusercontent.com/pdrb/papir/master/papir.png
+
+.. image:: https://raw.githubusercontent.com/pdrb/papir/master/papir.png
 
 
 Notes
@@ -30,25 +29,19 @@ Notes
 Install
 -------
 
-Install using pip:
-
-::
+Install using pip::
 
     pip install papir
 
 or
 
-Download and set executable permission on the script file:
-
-::
+Download and set executable permission on the script file::
 
     chmod +x papir.py
 
 or
 
-Download and run using the python interpreter:
-
-::
+Download and run using the python interpreter::
 
     python3 papir.py
 
@@ -75,30 +68,22 @@ Usage
 Examples
 --------
 
-Assuming the file "data.json" exists containing:
-
-::
+Assuming the file "data.json" exists containing::
 
     {
         "name": "Bob",
         "age": 30
     }
 
-Make a post request using that data:
-
-::
+Make a post request using that data::
 
     $ papir example.org -d data.json
 
-To use a different http method just inform it:
-
-::
+To use a different http method just inform it::
 
     $ papir example.org -d data.json put
 
-To customize the request headers, create a json file like:
-
-::
+To customize the request headers, create a json file like::
 
     {
         "Auth-User": "user",
@@ -106,20 +91,14 @@ To customize the request headers, create a json file like:
         "User-Agent": "myagent"
     }
 
-And add it to the request:
-
-::
+And add it to the request::
 
     $ papir example.org -h headers.json
 
-Obviously, you can mix it with all kinds of http methods:
-
-::
+Obviously, you can mix it with all kinds of http methods::
 
     $ papir example.org -h headers.json -d data.json patch
 
-Simple basic auth:
-
-::
+Simple basic auth::
 
     $ papir example.org -a user:pass
