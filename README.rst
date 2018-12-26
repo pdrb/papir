@@ -23,7 +23,7 @@ Notes
 
 - Works on Python3.3+
 - Uses only Python standard library for maximum compatibility
-- Small and simples source code that can be read in a few minutes
+- Small and simple source code that can be read in a few minutes
 
 
 Install
