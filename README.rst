@@ -9,7 +9,7 @@ colorize the full response (headers + json content).
 Json files are used to post, put, patch or delete and to customize the http
 headers.
 
-Basic http authentication is supported.
+Basic http authentication and gzip compression are supported.
 
 Simple example::
 
@@ -21,7 +21,7 @@ Simple example::
 Notes
 -----
 
-- Works on Python3.3+
+- Works on Python 3.3+
 - Uses only Python standard library for maximum compatibility
 - Small and simple source code that can be read in a few minutes
 

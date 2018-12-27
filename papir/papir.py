@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-# papir 0.1.1
+# papir 0.1.2
 # author: Pedro Buteri Gonring
 # email: pedro@bigode.net
-# date: 20181226
+# date: 20181227
 
 import sys
 import json
@@ -11,10 +11,11 @@ import optparse
 import urllib.request as urllib
 import base64
 import socket
+import gzip
 import re
 
 
-_version = '0.1.1'
+_version = '0.1.2'
 
 
 # Terminal colors ANSI escape sequences
@@ -163,6 +164,19 @@ def print_headers(headers, color):
         print((color + '%s' + Colors.END + ': %s') % (item[0], item[1]))
 
 
+# Read the response and decompress it if needed
+def read_response(resp):
+    raw_resp = resp.read()
+    if resp.info().get('Content-Encoding') == 'gzip':
+        try:
+            content = gzip.decompress(raw_resp)
+        except:
+            return raw_resp
+        else:
+            return content
+    return raw_resp
+
+
 # Parse, colorize and print json response
 def print_json_response(json_text, color):
     print()
@@ -181,23 +195,23 @@ def print_json_response(json_text, color):
 
 
 # Print the response
-def print_response(raw_response):
+def print_response(content):
     try:
-        resp_data = json.loads(raw_response)
-    # Print the raw response and exit if content is not valid json
+        resp_data = json.loads(content)
+    # Print the response and exit if content is not valid json
     except json.decoder.JSONDecodeError:
         print(
             Colors.RED + '\n*** Decode Error! Response content is not valid '
             'JSON ***\n' + Colors.END
         )
-        print(raw_response.decode())
+        print(content.decode())
         sys.exit(1)
     except UnicodeDecodeError:
         print(
             Colors.RED + '\n*** Decode Error! Response content is not a UTF-8 '
             'encoded text ***\n' + Colors.END
         )
-        print(raw_response)
+        print(content)
         sys.exit(1)
     else:
         # ensure_ascii=False is needed to correct print chars like 'é'
@@ -240,7 +254,7 @@ def cli():
     user_agent = 'papir/' + _version
     headers = {
         'user-agent': user_agent,
-        'accept-encoding': 'identity',
+        'accept-encoding': 'gzip',
         'connection': 'close'
     }
     if options.auth:
@@ -291,8 +305,8 @@ def cli():
     print_headers(resp.getheaders(), Colors.GREEN)
 
     # Read and print the response content
-    raw_response = resp.read()
-    print_response(raw_response)
+    content = read_response(resp)
+    print_response(content)
 
 
 # Run cli function if invoked from shell
