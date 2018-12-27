@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# papir 0.1.0
+# papir 0.1.1
 # author: Pedro Buteri Gonring
 # email: pedro@bigode.net
 # date: 20181226
@@ -14,7 +14,7 @@ import socket
 import re
 
 
-_version = '0.1.0'
+_version = '0.1.1'
 
 
 # Terminal colors ANSI escape sequences
@@ -186,11 +186,18 @@ def print_response(raw_response):
         resp_data = json.loads(raw_response)
     # Print the raw response and exit if content is not valid json
     except json.decoder.JSONDecodeError:
-        print('\n' + raw_response.decode() + '\n')
-        sys.exit(0)
+        print(
+            Colors.RED + '\n*** Decode Error! Response content is not valid '
+            'JSON ***\n' + Colors.END
+        )
+        print(raw_response.decode())
+        sys.exit(1)
     except UnicodeDecodeError:
-        print(Colors.RED + '\n*** Decode Error! Binary data? ***\n'
-              + Colors.END)
+        print(
+            Colors.RED + '\n*** Decode Error! Response content is not a UTF-8 '
+            'encoded text ***\n' + Colors.END
+        )
+        print(raw_response)
         sys.exit(1)
     else:
         # ensure_ascii=False is needed to correct print chars like 'é'
