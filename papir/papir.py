@@ -193,7 +193,10 @@ def print_response(raw_response):
               + Colors.END)
         sys.exit(1)
     else:
-        json_text = json.dumps(resp_data, indent=4, sort_keys=True)
+        # ensure_ascii=False is needed to correct print chars like 'é'
+        json_text = json.dumps(
+            resp_data, indent=4, sort_keys=True, ensure_ascii=False
+        )
         print_json_response(json_text, Colors.YELLOW)
 
 
