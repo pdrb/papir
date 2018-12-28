@@ -1,9 +1,10 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-# papir 0.1.2
+# papir 0.1.3
 # author: Pedro Buteri Gonring
 # email: pedro@bigode.net
-# date: 20181227
+# date: 20181228
 
 import sys
 import json
@@ -15,7 +16,7 @@ import gzip
 import re
 
 
-_version = '0.1.2'
+_version = '0.1.3'
 
 
 # Terminal colors ANSI escape sequences
@@ -196,6 +197,9 @@ def print_json_response(json_text, color):
 
 # Print the response
 def print_response(content):
+    if len(content) == 0:
+        print('\n')
+        return
     try:
         resp_data = json.loads(content)
     # Print the response and exit if content is not valid json
@@ -293,13 +297,12 @@ def cli():
             sys.exit(1)
         req, resp = do_post_request(url, headers, post_data, method)
 
-    # Get the response status, like: 200 OK
-    http_status = (resp.status, resp.msg)
-
     # Print req headers if verbose enabled
     if options.verbose:
         print_request_headers(req, Colors.PURPLE, Colors.CYAN)
 
+    # Get the response status, like: 200 OK
+    http_status = (resp.status, resp.msg)
     # Print the response status and headers
     print_http_status(http_status, Colors.BLUE)
     print_headers(resp.getheaders(), Colors.GREEN)
