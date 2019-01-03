@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# papir 0.1.3
+# papir 0.1.4
 # author: Pedro Buteri Gonring
 # email: pedro@bigode.net
-# date: 20181228
+# date: 20190103
 
 import sys
 import json
@@ -16,7 +16,7 @@ import gzip
 import re
 
 
-_version = '0.1.3'
+_version = '0.1.4'
 
 
 # Terminal colors ANSI escape sequences
@@ -149,20 +149,30 @@ def do_post_request(url, headers, data, method):
 # Colorize and print the req headers
 def print_request_headers(req, color_method, color_headers):
     selector = req.selector if not req.selector == '' else '/'
-    print(color_method + '%s %s' % (req.method, selector) + Colors.END)
+    if sys.stdout.isatty():
+        print(color_method + '%s %s' % (req.method, selector) + Colors.END)
+    else:
+        print('%s %s' % (req.method, selector))
     print_headers(req.header_items(), color_headers)
     print('\n')
 
 
 # Colorize and print http status
 def print_http_status(http_status, color):
-    print(color + 'HTTP %s %s' % (http_status[0], http_status[1]) + Colors.END)
+    if sys.stdout.isatty():
+        print(color + 'HTTP %s %s' % (http_status[0], http_status[1])
+              + Colors.END)
+    else:
+        print('HTTP %s %s' % (http_status[0], http_status[1]))
 
 
 # Colorize and print headers
 def print_headers(headers, color):
     for item in headers:
-        print((color + '%s' + Colors.END + ': %s') % (item[0], item[1]))
+        if sys.stdout.isatty():
+            print((color + '%s' + Colors.END + ': %s') % (item[0], item[1]))
+        else:
+            print('%s: %s' % (item[0], item[1]))
 
 
 # Read the response and decompress it if needed
@@ -188,7 +198,10 @@ def print_json_response(json_text, color):
         if len(elem_list) == 1:
             print(line)
         else:
-            key = color + elem_list[0] + Colors.END
+            if sys.stdout.isatty():
+                key = color + elem_list[0] + Colors.END
+            else:
+                key = elem_list[0]
             # Create the value string from the list elements
             value = ''.join(elem_list[1:])
             print(key + value)
@@ -204,17 +217,28 @@ def print_response(content):
         resp_data = json.loads(content)
     # Print the response and exit if content is not valid json
     except json.decoder.JSONDecodeError:
-        print(
-            Colors.RED + '\n*** Decode Error! Response content is not valid '
-            'JSON ***\n' + Colors.END
-        )
+        if sys.stdout.isatty():
+            print(
+                Colors.RED + '\n*** Decode Error! Response content is not '
+                'valid JSON ***\n' + Colors.END
+            )
+        else:
+            print(
+                '\n*** Decode Error! Response content is not valid JSON ***\n'
+            )
         print(content.decode())
         sys.exit(1)
     except UnicodeDecodeError:
-        print(
-            Colors.RED + '\n*** Decode Error! Response content is not a UTF-8 '
-            'encoded text ***\n' + Colors.END
-        )
+        if sys.stdout.isatty():
+            print(
+                Colors.RED + '\n*** Decode Error! Response content is not a '
+                'UTF-8 encoded text ***\n' + Colors.END
+            )
+        else:
+            print(
+                '\n*** Decode Error! Response content is not a UTF-8 encoded '
+                'text ***\n'
+            )
         print(content)
         sys.exit(1)
     else:
