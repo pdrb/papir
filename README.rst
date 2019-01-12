@@ -1,3 +1,5 @@
+|Downloads|
+
 papir
 =====
 
@@ -19,7 +21,7 @@ Simple example::
 
 
 Notes
------
+=====
 
 - Works on Python 3.3+
 - Uses only Python standard library for maximum compatibility
@@ -27,7 +29,7 @@ Notes
 
 
 Install
--------
+=======
 
 Install using pip::
 
@@ -47,7 +49,7 @@ Download and run using the python interpreter::
 
 
 Usage
------
+=====
 
 ::
 
@@ -66,7 +68,7 @@ Usage
 
 
 Examples
---------
+========
 
 Assuming the file "data.json" exists containing::
 
@@ -102,3 +104,6 @@ Obviously, you can mix it with all kinds of http methods::
 Simple basic auth::
 
     $ papir example.org -a user:pass
+
+
+.. |Downloads| image:: https://pepy.tech/badge/papir
