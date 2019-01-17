@@ -1,22 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# papir 0.1.4
+# papir 0.1.5
 # author: Pedro Buteri Gonring
 # email: pedro@bigode.net
-# date: 20190103
+# date: 2019-01-17
 
 import sys
 import json
 import optparse
 import urllib.request as urllib
+import urllib.parse as url_parse
 import base64
 import socket
 import gzip
 import re
 
 
-_version = '0.1.4'
+_version = '0.1.5'
 
 
 # Terminal colors ANSI escape sequences
@@ -299,6 +300,11 @@ def cli():
     # Add protocol if not provided
     if protocol != 'http' and protocol != 'https':
         url = 'http://' + url
+    # Parse the url params and encode them
+    parsed_url = list(url_parse.urlparse(url))
+    parsed_url[4] = url_parse.parse_qsl(parsed_url[4])
+    parsed_url[4] = url_parse.urlencode(parsed_url[4])
+    url = url_parse.urlunparse(parsed_url)
 
     # Load headers file if needed
     if options.headers_file:
