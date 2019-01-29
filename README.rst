@@ -8,7 +8,7 @@ Papir is an acronym for "Python API Requests".
 The main purpose is to make custom http requests to json APIs, prettify and
 colorize the full response (headers + json content).
 
-Json files are used to post, put, patch or delete and to customize the http
+Json is used to post, put, patch or delete and to customize the http
 headers.
 
 Basic http authentication and gzip compression are supported.
@@ -58,13 +58,15 @@ Usage
     make http requests to json apis
 
     Options:
-    --version        show program's version number and exit
-    -d DATA_FILE     json file to post, put, patch or delete
-    -h HEADERS_FILE  json file containing additional headers
-    -t TIMEOUT       timeout in seconds to wait for response (default: 10)
-    -a AUTH          basic http authentication in the format username:password
-    -f, --follow     follow redirects (default: disabled)
-    -v, --verbose    show request headers (default: disabled)
+      --version        show program's version number and exit
+      -d DATA_FILE     json file to post, put, patch or delete
+      -h HEADERS_FILE  json file containing additional headers
+      -j JSON_DATA     json string to post, put, patch or delete
+      -e JSON_HEADERS  json string containing additional headers
+      -t TIMEOUT       timeout in seconds to wait for response (default: 10)
+      -a AUTH          basic http authentication in the format username:password
+      -f, --follow     follow redirects (default: disabled)
+      -v, --verbose    show request headers (default: disabled)
 
 
 Examples
@@ -81,6 +83,10 @@ Make a post request using that data::
 
     $ papir example.org -d data.json
 
+The json data can also be passed directly from cli::
+
+    $ papir example.org -j '{"name": "Bob", "age": 30}'
+
 To use a different http method just inform it::
 
     $ papir example.org -d data.json put
@@ -96,6 +102,10 @@ To customize the request headers, create a json file like::
 And add it to the request::
 
     $ papir example.org -h headers.json
+
+Headers can also be customized directly from cli::
+
+    $ papir example.org -e '{"custom-header": "foobar", "user-agent": "myagent"}'
 
 Obviously, you can mix it with all kinds of http methods::
 

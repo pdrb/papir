@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# papir 0.1.5
+# papir 0.2.0
 # author: Pedro Buteri Gonring
 # email: pedro@bigode.net
-# date: 2019-01-17
+# date: 2019-01-29
 
 import sys
 import json
@@ -17,7 +17,7 @@ import gzip
 import re
 
 
-_version = '0.1.5'
+_version = '0.2.0'
 
 
 # Terminal colors ANSI escape sequences
@@ -54,6 +54,14 @@ def get_parsed_args():
         help='json file containing additional headers'
     )
     parser.add_option(
+        '-j', dest='json_data',
+        help='json string to post, put, patch or delete'
+    )
+    parser.add_option(
+        '-e', dest='json_headers',
+        help='json string containing additional headers'
+    )
+    parser.add_option(
         '-t', dest='timeout', default=10, type=int,
         help='timeout in seconds to wait for response (default: %default)'
     )
@@ -85,6 +93,16 @@ def get_parsed_args():
         parser.error('too many arguments')
     if options.timeout < 1:
         parser.error('timeout must be a positive number')
+    if options.data_file is not None and options.json_data is not None:
+        parser.error(
+            'json data file and json data string provided, choose just one to '
+            'use'
+        )
+    if options.headers_file is not None and options.json_headers is not None:
+        parser.error(
+            'json headers file and json headers string provided, choose just '
+            'one to use'
+        )
     return (options, args)
 
 
@@ -108,6 +126,29 @@ def open_data_file(data_file):
 # Open the json headers file and update the original headers
 def open_headers_file(headers_file, headers):
     headers_data = open_data_file(headers_file)
+    headers = update_headers(headers_data, headers)
+    return headers
+
+
+# Load json data from string
+def load_json_data(json_string):
+    try:
+        data = json.loads(json_string)
+    except json.decoder.JSONDecodeError as ex:
+        print('\nMalformed JSON: %s\n' % ex)
+        sys.exit(1)
+    return data
+
+
+# Load and update headers from json string
+def load_json_headers(json_string, headers):
+    headers_data = load_json_data(json_string)
+    headers = update_headers(headers_data, headers)
+    return headers
+
+
+# Update headers
+def update_headers(headers_data, headers):
     # Handle case insensitive keys, the original headers keys are lowercase
     for key, value in headers_data.items():
         headers[key.lower()] = value
@@ -129,7 +170,7 @@ def open_url(req):
     return req, resp
 
 
-# Handle get and head methods
+# Handle get, head and options methods
 def do_get_request(url, headers, method):
     req = urllib.Request(url, headers=headers, method=method)
     req, resp = open_url(req)
@@ -252,7 +293,9 @@ def print_response(content):
 
 # Validate and return provided http method
 def get_method(args):
-    valid_methods = ('GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE')
+    valid_methods = (
+        'GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'
+    )
     method = ''
     if len(args) == 2:
         method = args[1].upper()
@@ -280,6 +323,7 @@ def cli():
     (options, args) = get_parsed_args()
     socket.setdefaulttimeout(options.timeout)
     method = get_method(args)
+    post_data = None
     user_agent = 'papir/' + _version
     headers = {
         'user-agent': user_agent,
@@ -314,16 +358,24 @@ def cli():
     if options.data_file:
         post_data = open_data_file(options.data_file)
 
+    # Load json headers from string
+    if options.json_headers:
+        headers = load_json_headers(options.json_headers, headers)
+
+    # Load json data from string
+    if options.json_data:
+        post_data = load_json_data(options.json_data)
+
     # Do the request based on cli args
-    if not method and not options.data_file:
+    if not method and not post_data:
         req, resp = do_get_request(url, headers, method='GET')
-    elif not method and options.data_file:
+    elif not method and post_data:
         req, resp = do_post_request(url, headers, post_data, method='POST')
-    elif method == 'GET' or method == 'HEAD':
+    elif method == 'GET' or method == 'HEAD' or method == 'OPTIONS':
         req, resp = do_get_request(url, headers, method)
     else:
-        if not options.data_file:
-            print('\nError: Missing JSON file to "%s"\n' % method)
+        if not post_data:
+            print('\nError: Missing JSON to "%s"\n' % method)
             sys.exit(1)
         req, resp = do_post_request(url, headers, post_data, method)
 
