@@ -4,26 +4,24 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+with open(path.join(here, "README.rst"), encoding="utf-8") as f:
     long_description = f.read()
 
 
-version = '0.2.0'
+version = "0.3.0"
 
 
 setup(
-    name='papir',
+    name="papir",
     version=version,
-    description='Make http requests to json apis',
+    description="Make http requests to json apis",
     long_description=long_description,
-    author='Pedro Buteri Gonring',
-    author_email='pedro@bigode.net',
-    url='https://github.com/pdrb/papir',
-    license='MIT',
+    author="Pedro Buteri Gonring",
+    author_email="pedro@bigode.net",
+    url="https://github.com/pdrb/papir",
+    license="MIT",
     classifiers=[],
-    keywords='http api json requests',
-    packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
-    entry_points={
-        'console_scripts': ['papir=papir.papir:cli'],
-    },
+    keywords="http api json requests",
+    packages=find_packages(exclude=["contrib", "docs", "tests*"]),
+    entry_points={"console_scripts": ["papir=papir.papir:cli"],},
 )

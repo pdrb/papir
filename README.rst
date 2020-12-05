@@ -1,4 +1,4 @@
-|Downloads|
+|Version| |Downloads| |Black| |License|
 
 papir
 =====
@@ -23,9 +23,9 @@ Simple example::
 Notes
 =====
 
-- Works on Python 3.3+
+- Works on Python 3
 - Uses only Python standard library for maximum compatibility
-- Small and simple source code that can be read in a few minutes
+- Small and simple source code
 
 
 Install
@@ -66,6 +66,7 @@ Usage
       -t TIMEOUT       timeout in seconds to wait for response (default: 10)
       -a AUTH          basic http authentication in the format username:password
       -f, --follow     follow redirects (default: disabled)
+      -i, --insecure   allow insecure SSL connections (default: disabled)
       -v, --verbose    show request headers (default: disabled)
 
 
@@ -115,5 +116,19 @@ Simple basic auth::
 
     $ papir example.org -a user:pass
 
+To ignore invalid SSL certificates::
+
+    $ papir https://self-signed.badssl.com/ -i
+
+
+.. |Version| image:: https://badge.fury.io/py/papir.svg
+    :target: https://pypi.org/project/papir/
 
 .. |Downloads| image:: https://pepy.tech/badge/papir
+     :target: https://pepy.tech/project/papir
+
+.. |Black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
+
+.. |License| image:: https://img.shields.io/pypi/l/papir.svg
+    :target: https://github.com/pdrb/papir/blob/master/LICENSE
